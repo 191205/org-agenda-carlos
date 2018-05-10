@@ -29,6 +29,19 @@
                  (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)
                  (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)))))))
 
+(defun carlos/org-agenda-filter-schedule-todo ()
+  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+    (if (equal nil (org-get-scheduled-time (point)) )
+        nil
+      subtree-end)))
+
+(defun carlos/org-agenda-before-sorting-filter-function (src-str &optional index)
+  "docstring"
+  (interactive)
+  (setq carlos/debug-text-perporty src-str)
+  (concat src-str (or (org-entry-get (get-text-property 0 'org-marker src-str) "CREATED") "unknowtime")  ":")
+  )
+
 (defun org-sort-agenda-items-sort-created (a b)
   (let (
         (a-pos (get-text-property 0 'org-marker a))
@@ -54,5 +67,14 @@
 (defun carlos/org-agenda-parsetime (timestr)
   (let ((time1 (parse-time-string (or  timestr (format-time-string "%Y-%m-%d")))))
     (encode-time (or (nth 0 time1) 0) (or (nth 1 time1) 0) (or (nth 2 time1) 0) (nth 3 time1) (nth 4 time1) (nth 5 time1))))
+
+(defun carlos/insert-heading-created-timestamp ()
+  (save-excursion
+    (org-return)
+    (org-cycle)
+    (if (and (boundp 'carlos/autoExpiry) carlos/autoExpiry)
+        t
+      (org-expiry-insert-created))))
+(add-hook 'org-insert-heading-hook 'carlos/insert-heading-created-timestamp)
 
 (provide 'org_agenda_carlos)

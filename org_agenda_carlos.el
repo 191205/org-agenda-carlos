@@ -63,6 +63,7 @@
   (progn
     (setq frame-title-format "DashBoard")
     (org-agenda arg "carlos/org-agenda")
+    (toggle-truncate-lines nil)
     (when (< 1 (length (window-list)))
       (delete-other-windows))))
 

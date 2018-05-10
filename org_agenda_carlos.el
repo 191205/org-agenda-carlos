@@ -39,8 +39,10 @@
   "docstring"
   (interactive)
   (setq carlos/debug-text-perporty src-str)
-  (concat src-str (or (org-entry-get (get-text-property 0 'org-marker src-str) "CREATED") "unknowtime")  ":")
-  )
+  (let ((pom (get-text-property 0 'org-marker src-str))
+        )
+    (let ((scheduled (org-entry-get pom "SCHEDULED")))
+      (concat src-str (or (org-entry-get pom "CREATED") "unknowtime") (and scheduled (concat " S->" scheduled )) ":"))))
 
 (defun org-sort-agenda-items-sort-created (a b)
   (let (

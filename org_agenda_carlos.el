@@ -15,8 +15,9 @@
                   (
                    (org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp"* DONE"))
-                   (org-agenda-span 1)
+                   (org-agenda-span 2)
                    (org-agenda-start-day "+0d")
+                   (org-agenda-start-on-weekday nil)
                    (org-agenda--show-holidays-birthdays t)
                    (org-agenda-files carlos/org-agenda-file-list)
                    ))

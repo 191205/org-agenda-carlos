@@ -3,7 +3,7 @@
       '(
         ("carlos/org-agenda" "carlos work panel"
          (
-          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+LejuWork+TODO=\"TARGET\""
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
                 (
                  (org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
@@ -20,7 +20,7 @@
                    (org-agenda--show-holidays-birthdays t)
                    (org-agenda-files carlos/org-agenda-file-list)
                    ))
-          (tags "-HOLD+LejuWork+TODO=\"TODO\"|-HOLD+TODO=\"WORKING\""
+          (tags "-HOLD+TODO=\"TODO\"|-HOLD+TODO=\"WORKING\""
                 (
                  (org-agenda-overriding-header "❖----------------TODO lists----------------------❖")
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)

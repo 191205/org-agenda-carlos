@@ -5,6 +5,10 @@ carlos customize org agendas for GTD
 
 (global-set-key (kbd "<f5>") 'carlos/org-agenda-show)
 
+## range day of agenda view
+
+(setq carlos/agenda_view_span 3)
+
 ## org file lists
 
 (setq carlos/org-agenda-file-list '("path/of/orgfile"))

@@ -21,9 +21,9 @@
                    (org-agenda--show-holidays-birthdays t)
                    (org-agenda-files carlos/org-agenda-file-list)
                    ))
-          (tags "-HOLD+TODO=\"TODO\"|-HOLD+TODO=\"WORKING\""
+          (alltodo  ""
                 (
-                 (org-agenda-overriding-header "❖----------------TODO lists----------------------❖")
+                 (org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/org-agenda-file-list)

@@ -1,4 +1,8 @@
 ;;; -*- lexical-binding: t -*-
+
+(if (not (boundp 'carlos/agenda_view_span))
+    (setq carlos/agenda_view_span 2))
+
 (setq org-carlos-agenda-custom-commands
       '(
         ("carlos/org-agenda" "carlos work panel"

@@ -12,9 +12,7 @@
                  (org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
                  (org-agenda-sorting-strategy '(category-keep))
-                 (org-agenda-files carlos/org-agenda-file-list)
-                 )
-                )
+                 (org-agenda-files carlos/org-agenda-file-list)))
           (agenda "schedule"
                   (
                    (org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
@@ -23,8 +21,8 @@
                    (org-agenda-start-day "+0d")
                    (org-agenda-start-on-weekday nil)
                    (org-agenda--show-holidays-birthdays t)
-                   (org-agenda-files carlos/org-agenda-file-list)
-                   ))
+                   (org-agenda-entry-types '(:scheduled :deadline))
+                   (org-agenda-files carlos/org-agenda-file-list)))
           (alltodo  ""
                 (
                  (org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")

@@ -8,14 +8,12 @@
         ("carlos/org-agenda" "carlos work panel"
          (
           (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
-                (
-                 (org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
+                ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
                  (org-agenda-sorting-strategy '(category-keep))
                  (org-agenda-files carlos/org-agenda-file-list)))
           (agenda "schedule"
-                  (
-                   (org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
+                  ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp"* DONE"))
                    (org-agenda-span (or carlos/agenda_view_span 2))
                    (org-agenda-start-day "+0d")
@@ -24,12 +22,10 @@
                    (org-agenda-entry-types '(:scheduled :deadline))
                    (org-agenda-files carlos/org-agenda-file-list)))
           (alltodo  ""
-                (
-                 (org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
+                ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/org-agenda-file-list)
-                 ;; (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)
                  (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)))))))
 
 (defun carlos/org-agenda-filter-schedule-todo ()
@@ -42,8 +38,7 @@
   "docstring"
   (interactive)
   (setq carlos/debug-text-perporty src-str)
-  (let ((pom (get-text-property 0 'org-marker src-str))
-        )
+  (let ((pom (get-text-property 0 'org-marker src-str)))
     (let ((scheduled (org-entry-get pom "SCHEDULED")))
       (concat src-str (or (org-entry-get pom "CREATED") "unknowtime") (and scheduled (concat " S->" scheduled )) ":"))))
 
@@ -54,12 +49,12 @@
         )
     (let ((a-priority (* (- 255 (string-to-char (org-entry-get a-pos "PRIORITY"))) 100000))
           (b-priority (* (- 255 (string-to-char (org-entry-get b-pos "PRIORITY"))) 100000)))
-      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
-            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
+      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
+            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
         (if (time-less-p b-time a-time)
             (progn
-              -1
-              ) nil)))))
+              -1)
+          nil)))))
 
 (defun carlos/org-agenda-show (&optional arg)
   (interactive )

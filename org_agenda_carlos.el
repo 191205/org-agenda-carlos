@@ -5,6 +5,32 @@
 
 (setq org-carlos-agenda-custom-commands
       '(
+        ("carlos/org-personal-agenda" "carlos personal panel"
+         (
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
+                ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
+                 (org-agenda-prefix-format "%l%t")
+                 (org-agenda-sorting-strategy '(category-keep))
+                 (org-agenda-files carlos/personal-org-agenda-filelist)))
+          (agenda "schedule"
+                  ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp"* DONE"))
+                   (org-agenda-span (or carlos/agenda_view_span 2))
+                   (org-agenda-start-day "+0d")
+                   (org-agenda-start-on-weekday nil)
+                   (org-agenda--show-holidays-birthdays t)
+                   (org-agenda-entry-types '(:scheduled :deadline))
+                   (org-agenda-files carlos/personal-org-agenda-filelist)))
+          (alltodo  ""
+                ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
+                 (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
+                 (org-agenda-sorting-strategy '(user-defined-up))
+                 (org-agenda-files carlos/personal-org-agenda-filelist)
+                 (org-agenda-skip-function 'org-agenda-skip-if-scheduled-later)
+                 ;; (org-agenda-skip-entry-if '(scheduled deadline))
+
+                 ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
+                 ))))
         ("carlos/org-agenda" "carlos work panel"
          (
           (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
@@ -26,7 +52,26 @@
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/org-agenda-file-list)
-                 (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)))))))
+                 (org-agenda-skip-function 'org-agenda-skip-if-scheduled-later)
+                 ;; (org-agenda-skip-entry-if '(scheduled deadline))
+                 ;; (org-agenda-skip-entry-if 'scheduled)
+                 ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
+                 ))))))
+
+(defun org-agenda-skip-if-scheduled-later ()
+"If this function returns nil, the current match should not be skipped.
+Otherwise, the function must return a position from where the search
+should be continued."
+  (ignore-errors
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (scheduled-seconds
+            (time-to-seconds
+              (org-time-string-to-time
+                (org-entry-get nil "SCHEDULED"))))
+          (now (time-to-seconds (current-time))))
+       (and scheduled-seconds
+            (>= scheduled-seconds now)
+            subtree-end))))
 
 (defun carlos/org-agenda-filter-schedule-todo ()
   (let ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -49,8 +94,8 @@
         )
     (let ((a-priority (* (- 255 (string-to-char (org-entry-get a-pos "PRIORITY"))) 100000))
           (b-priority (* (- 255 (string-to-char (org-entry-get b-pos "PRIORITY"))) 100000)))
-      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
-            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
+      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
+            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
         (if (time-less-p b-time a-time)
             (progn
               -1)
@@ -64,6 +109,16 @@
     (toggle-truncate-lines nil)
     (when (< 1 (length (window-list)))
       (delete-other-windows))))
+
+(defun carlos/org-personal-agenda-show (&optional arg)
+  (interactive )
+  (progn
+    (setq frame-title-format "Personal DashBoard")
+    (org-agenda arg "carlos/org-personal-agenda")
+    (toggle-truncate-lines nil)
+    (when (< 1 (length (window-list)))
+      (delete-other-windows))))
+
 
 (defun carlos/org-agenda-parsetime (timestr)
   (let ((time1 (parse-time-string (or  timestr (format-time-string "%Y-%m-%d")))))

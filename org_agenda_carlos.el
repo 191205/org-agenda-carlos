@@ -7,7 +7,7 @@
       '(
         ("carlos/org-personal-agenda" "carlos personal panel"
          (
-          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
                 ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
                  (org-agenda-sorting-strategy '(category-keep))
@@ -33,7 +33,7 @@
                  ))))
         ("carlos/org-agenda" "carlos work panel"
          (
-          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|+Work+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
                 ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
                  (org-agenda-sorting-strategy '(category-keep))

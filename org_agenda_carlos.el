@@ -26,7 +26,7 @@
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/personal-org-agenda-filelist)
-                 (org-agenda-skip-function 'org-agenda-skip-if-scheduled-later)
+                 (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
                  ;; (org-agenda-skip-entry-if '(scheduled deadline))
 
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
@@ -52,26 +52,24 @@
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/org-agenda-file-list)
-                 (org-agenda-skip-function 'org-agenda-skip-if-scheduled-later)
+                 (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
                  ;; (org-agenda-skip-entry-if '(scheduled deadline))
                  ;; (org-agenda-skip-entry-if 'scheduled)
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
                  ))))))
 
-(defun org-agenda-skip-if-scheduled-later ()
-"If this function returns nil, the current match should not be skipped.
+(defun org-agenda-skip-if-scheduled-or-low-priority ()
+  "If this function returns nil, the current match should not be skipped.
 Otherwise, the function must return a position from where the search
 should be continued."
   (ignore-errors
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-          (scheduled-seconds
-            (time-to-seconds
-              (org-time-string-to-time
-                (org-entry-get nil "SCHEDULED"))))
-          (now (time-to-seconds (current-time))))
-       (and scheduled-seconds
-            (>= scheduled-seconds now)
-            subtree-end))))
+          (scheduled-time (org-entry-get nil "SCHEDULED"))
+          (priority (org-entry-get nil "PRIORITY")))
+      (if (or scheduled-time (and (not (string-equal "A" priority))
+                                 (not (string-equal "B" priority))))
+          subtree-end
+        nil))))
 
 (defun carlos/org-agenda-filter-schedule-todo ()
   (let ((subtree-end (save-excursion (org-end-of-subtree t))))

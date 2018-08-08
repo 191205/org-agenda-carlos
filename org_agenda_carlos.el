@@ -28,9 +28,16 @@
                  (org-agenda-files carlos/personal-org-agenda-filelist)
                  (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
                  ;; (org-agenda-skip-entry-if '(scheduled deadline))
-
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
                  ))))
+        ("carlos/org-all-todo" "carlos org all todo to pick"
+         (
+          (alltodo  ""
+                ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
+                 (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
+                 (org-agenda-sorting-strategy '(user-defined-up))
+                 (org-agenda-files (append  carlos/org-agenda-file-list carlos/personal-org-agenda-filelist))
+                 (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
         ("carlos/org-agenda" "carlos work panel"
          (
           (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
@@ -72,10 +79,13 @@ should be continued."
         nil))))
 
 (defun carlos/org-agenda-filter-schedule-todo ()
-  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-    (if (equal nil (org-get-scheduled-time (point)) )
-        nil
-      subtree-end)))
+  (ignore-errors
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (scheduled-time (org-entry-get nil "SCHEDULED"))
+          )
+      (if (or scheduled-time )
+          subtree-end
+        nil))))
 
 (defun carlos/org-agenda-before-sorting-filter-function (src-str &optional index)
   "docstring"
@@ -107,6 +117,16 @@ should be continued."
     (toggle-truncate-lines nil)
     (when (< 1 (length (window-list)))
       (delete-other-windows))))
+
+(defun carlos/org-all-todo-agenda-show (&optional arg)
+  (interactive )
+  (progn
+    (setq frame-title-format "carlos/org-all-todo")
+    (org-agenda arg "carlos/org-all-todo")
+    (toggle-truncate-lines nil)
+    (when (< 1 (length (window-list)))
+      (delete-other-windows))))
+
 
 (defun carlos/org-personal-agenda-show (&optional arg)
   (interactive )

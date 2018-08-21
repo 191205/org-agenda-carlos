@@ -9,7 +9,7 @@
          (
           (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
                 ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
-                 (org-agenda-prefix-format "%l%t")
+                 (org-agenda-prefix-format "%l%t") 
                  (org-agenda-sorting-strategy '(category-keep))
                  (org-agenda-files carlos/personal-org-agenda-filelist)))
           (agenda "schedule"
@@ -32,7 +32,7 @@
                  ))))
         ("carlos/org-all-todo" "carlos org all todo to pick"
          (
-          (alltodo  ""
+          (alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))

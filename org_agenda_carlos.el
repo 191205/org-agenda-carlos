@@ -31,8 +31,7 @@
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
                  ))))
         ("carlos/org-all-todo" "carlos org all todo to pick"
-         (
-          (alltodo ""
+         ((alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))

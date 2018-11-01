@@ -30,12 +30,19 @@
                  ;; (org-agenda-skip-entry-if '(scheduled deadline))
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
                  ))))
-        ("carlos/org-all-todo" "carlos org all todo to pick"
+        ("carlos/org-all-leju-todo" "carlos org all todo to pick"
          ((alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
                  (org-agenda-sorting-strategy '(user-defined-up))
-                 (org-agenda-files (append  carlos/org-agenda-file-list carlos/personal-org-agenda-filelist))
+                 (org-agenda-files (append  carlos/org-agenda-file-list ))
+                 (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
+        ("carlos/org-all-personal-todo" "carlos org all todo to pick"
+         ((alltodo ""
+                ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
+                 (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
+                 (org-agenda-sorting-strategy '(user-defined-up))
+                 (org-agenda-files (append carlos/personal-org-agenda-filelist))
                  (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
         ("carlos/org-agenda" "carlos work panel"
          (
@@ -71,9 +78,15 @@ should be continued."
   (ignore-errors
     (let ((subtree-end (save-excursion (org-end-of-subtree t)))
           (scheduled-time (org-entry-get nil "SCHEDULED"))
-          (priority (org-entry-get nil "PRIORITY")))
+          (priority (org-entry-get nil "PRIORITY"))
+          (todo-state (org-get-todo-state))
+          )
       (if (or scheduled-time (and (not (string-equal "A" priority))
-                                 (not (string-equal "B" priority))))
+                                  (not (string-equal "B" priority)))
+              (or (string-equal "IN-PROGRESS" todo-state)
+                  (string-equal "TARGET" todo-state)
+                  )
+              )
           subtree-end
         nil))))
 
@@ -121,7 +134,11 @@ should be continued."
   (interactive )
   (progn
     (setq frame-title-format "carlos/org-all-todo")
-    (org-agenda arg "carlos/org-all-todo")
+    ;; carlos/org-all-personal-todo
+    ;; carlos/org-all-leju-todo
+    (if (or carlos/org-agenda-force-personal (and (carlos/is-home-network) (not carlos/org-agenda-force-leju)))
+        (org-agenda arg "carlos/org-all-personal-todo")
+      (org-agenda arg "carlos/org-all-leju-todo"))
     (toggle-truncate-lines nil)
     (when (< 1 (length (window-list)))
       (delete-other-windows))))

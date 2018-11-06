@@ -76,11 +76,16 @@
 Otherwise, the function must return a position from where the search
 should be continued."
   (ignore-errors
-    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+    (let ((subtree-end (save-excursion (progn
+                                        (org-next-visible-heading 1)
+                                        (point)
+                                        )))
           (scheduled-time (org-entry-get nil "SCHEDULED"))
           (priority (org-entry-get nil "PRIORITY"))
           (todo-state (org-get-todo-state))
+          (org-heading (org-get-heading))
           )
+      ;; (message "heading:%s scheduled-time:%s priority:%s todo-state:%s" org-heading scheduled-time priority todo-state)
       (if (or scheduled-time (and (not (string-equal "A" priority))
                                   (not (string-equal "B" priority)))
               (or (string-equal "IN-PROGRESS" todo-state)

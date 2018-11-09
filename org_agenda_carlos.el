@@ -46,7 +46,7 @@
                  (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
         ("carlos/org-agenda" "carlos work panel"
          (
-          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"TARGET\""
                 ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
                  (org-agenda-sorting-strategy '(category-keep))
@@ -119,8 +119,8 @@ should be continued."
         )
     (let ((a-priority (* (- 255 (string-to-char (org-entry-get a-pos "PRIORITY"))) 100000))
           (b-priority (* (- 255 (string-to-char (org-entry-get b-pos "PRIORITY"))) 100000)))
-      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
-            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
+      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "UPDATED") (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
+            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "UPDATED") (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
         (if (time-less-p b-time a-time)
             (progn
               -1)

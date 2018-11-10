@@ -53,7 +53,7 @@
                  (org-agenda-files carlos/org-agenda-file-list)))
           (agenda "schedule"
                   ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp"* DONE"))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp "* WORKING"))
                    (org-agenda-span (or carlos/agenda_view_span 2))
                    (org-agenda-start-day "+0d")
                    (org-agenda-start-on-weekday nil)
@@ -126,12 +126,13 @@ should be continued."
               -1)
           nil)))))
 
-(defun carlos/org-agenda-show (&optional arg)
+(defun carlos/org-agenda-leju-show (&optional arg)
   (interactive )
   (progn
     (setq frame-title-format "DashBoard")
     (org-agenda arg "carlos/org-agenda")
     (toggle-truncate-lines nil)
+    (bh/org-agenda-to-appt)
     (when (< 1 (length (window-list)))
       (delete-other-windows))))
 
@@ -139,8 +140,6 @@ should be continued."
   (interactive )
   (progn
     (setq frame-title-format "carlos/org-all-todo")
-    ;; carlos/org-all-personal-todo
-    ;; carlos/org-all-leju-todo
     (if (or carlos/org-agenda-force-personal (and (carlos/is-home-network) (not carlos/org-agenda-force-leju)))
         (org-agenda arg "carlos/org-all-personal-todo")
       (org-agenda arg "carlos/org-all-leju-todo"))

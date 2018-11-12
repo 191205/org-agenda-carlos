@@ -53,7 +53,7 @@
                  (org-agenda-files carlos/org-agenda-file-list)))
           (agenda "schedule"
                   ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp "* WORKING"))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp  ".* TARGET .*\\|.* WORKING .*\\|.* IN-PROGRESS .*" ))
                    (org-agenda-span (or carlos/agenda_view_span 2))
                    (org-agenda-start-day "+0d")
                    (org-agenda-start-on-weekday nil)
@@ -90,8 +90,7 @@ should be continued."
                                   (not (string-equal "B" priority)))
               (or (string-equal "IN-PROGRESS" todo-state)
                   (string-equal "TARGET" todo-state)
-                  )
-              )
+                  (string-equal "WORKING" todo-state)))
           subtree-end
         nil))))
 

@@ -14,7 +14,7 @@
                  (org-agenda-files carlos/personal-org-agenda-filelist)))
           (agenda "schedule"
                   ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp"* DONE"))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ".* TARGET .*\\|.* WORKING .*\\|.* IN-PROGRESS .*"))
                    (org-agenda-span (or carlos/agenda_view_span 2))
                    (org-agenda-start-day "+0d")
                    (org-agenda-start-on-weekday nil)

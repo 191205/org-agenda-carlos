@@ -29,7 +29,10 @@
                  (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
                  ;; (org-agenda-skip-entry-if '(scheduled deadline))
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
-                 ))))
+                 ))
+          (todo "DONE"
+                ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
+                 (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))
         ("carlos/org-all-leju-todo" "carlos org all todo to pick"
          ((alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
@@ -69,7 +72,29 @@
                  ;; (org-agenda-skip-entry-if '(scheduled deadline))
                  ;; (org-agenda-skip-entry-if 'scheduled)
                  ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
-                 ))))))
+                 ))
+          (todo "DONE"
+                ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
+                 (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))))
+
+(defun org-agenda-skip-if-not-Updated-today ()
+  "If this function returns nil, the current match should not be skipped.
+Otherwise, the function must return a position from where the search
+should be continued."
+  (ignore-errors
+    (let* ((subtree-end (save-excursion (progn
+                                        (org-next-visible-heading 1)
+                                        (point)
+                                        )))
+          (now (float-time (carlos/parse-time (format-time-string "%Y-%m-%d"))))
+          (updated_at_str (org-entry-get (point) "UPDATED"))
+          (updated_at (float-time (carlos/parse-time updated_at_str)))
+          )
+      (if (or (> now updated_at) (equal updated_at_str nil))
+          (progn
+            subtree-end)
+        (progn
+          nil)))))
 
 (defun org-agenda-skip-if-scheduled-or-low-priority ()
   "If this function returns nil, the current match should not be skipped.

@@ -27,12 +27,7 @@
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/personal-org-agenda-filelist)
                  (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
-                 ;; (org-agenda-skip-entry-if '(scheduled deadline))
-                 ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
-                 ))
-          (todo "DONE"
-                ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
-                 (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))
+                 ))))
         ("carlos/org-all-leju-todo" "carlos org all todo to pick"
          ((alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
@@ -69,12 +64,11 @@
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files carlos/org-agenda-file-list)
                  (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
-                 ;; (org-agenda-skip-entry-if '(scheduled deadline))
-                 ;; (org-agenda-skip-entry-if 'scheduled)
-                 ;; (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-function)
-                 ))
-          (todo "DONE"
+                 ))))
+        ("carlos/did-today" "carlos Did task panel"
+         ((todo "DONE"
                 ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
+                 (org-agenda-files '("/Users/carlos/Documents/leju/leju_prj/LejuTodo.org" "/Users/carlos/Documents/leju/leju_prj/personal.org"))
                  (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))))
 
 (defun org-agenda-skip-if-not-Updated-today ()
@@ -156,7 +150,7 @@ should be continued."
     (setq frame-title-format "DashBoard")
     (org-agenda arg "carlos/org-agenda")
     (toggle-truncate-lines nil)
-    (bh/org-agenda-to-appt)
+    ;; (bh/org-agenda-to-appt)
     (when (< 1 (length (window-list)))
       (delete-other-windows))))
 

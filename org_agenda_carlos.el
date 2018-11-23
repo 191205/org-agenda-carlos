@@ -7,8 +7,8 @@
       '(
         ("carlos/org-personal-agenda" "carlos personal panel"
          (
-          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"IN-PROGRESS\"|-HOLD+TODO=\"TARGET\""
-                ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\""
+                ((org-agenda-overriding-header "❖----------------Working----------------------❖")
                  (org-agenda-prefix-format "%l%t") 
                  (org-agenda-sorting-strategy '(category-keep))
                  (org-agenda-files carlos/personal-org-agenda-filelist)))
@@ -44,8 +44,8 @@
                  (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
         ("carlos/org-agenda" "carlos work panel"
          (
-          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\"|-HOLD+TODO=\"TARGET\""
-                ((org-agenda-overriding-header "❖----------------LONG-TREM & Working----------------------❖")
+          (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\""
+                ((org-agenda-overriding-header "❖----------------Working----------------------❖")
                  (org-agenda-prefix-format "%l%t")
                  (org-agenda-sorting-strategy '(category-keep))
                  (org-agenda-files carlos/org-agenda-file-list)))
@@ -81,7 +81,7 @@ should be continued."
                                         (point)
                                         )))
           (now (float-time (carlos/parse-time (format-time-string "%Y-%m-%d"))))
-          (updated_at_str (org-entry-get (point) "UPDATED"))
+          (updated_at_str (org-entry-get (point) org-expiry-updated-property-name))
           (updated_at (float-time (carlos/parse-time updated_at_str)))
           )
       (if (or (> now updated_at) (equal updated_at_str nil))
@@ -137,8 +137,8 @@ should be continued."
         )
     (let ((a-priority (* (- 255 (string-to-char (org-entry-get a-pos "PRIORITY"))) 100000))
           (b-priority (* (- 255 (string-to-char (org-entry-get b-pos "PRIORITY"))) 100000)))
-      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos "UPDATED") (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
-            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos "UPDATED") (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
+      (let ((a-time (+ a-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos org-expiry-updated-property-name) (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
+            (b-time (+ b-priority (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos org-expiry-updated-property-name) (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
         (if (time-less-p b-time a-time)
             (progn
               -1)
@@ -157,6 +157,7 @@ should be continued."
 (defun carlos/org-all-todo-agenda-show (&optional arg)
   (interactive )
   (progn
+    (message "Cloecting Todo..." )
     (setq frame-title-format "carlos/org-all-todo")
     (if (or carlos/org-agenda-force-personal (and (carlos/is-home-network) (not carlos/org-agenda-force-leju)))
         (org-agenda arg "carlos/org-all-personal-todo")

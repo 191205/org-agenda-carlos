@@ -29,3 +29,7 @@ append the customize commands to origin org agendas command, need to set in emac
          "* TODO [#A] [Leju 日常] %?\n:PROPERTIES:\n:CREATED:  %U\n:END:\n")
         ))      
 ```
+
+## Parse Update timestamp
+
+(setq org-expiry-updated-property-name "your update perproty name")

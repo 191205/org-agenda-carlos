@@ -31,14 +31,14 @@
         ("carlos/org-all-leju-todo" "carlos org all todo to pick"
          ((alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
-                 (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
+                 (org-agenda-cmp-user-defined 'org-agenda-sort-all-todo)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files (append  carlos/org-agenda-file-list ))
                  (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
         ("carlos/org-all-personal-todo" "carlos org all todo to pick"
          ((alltodo ""
-                ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
-                 (org-agenda-cmp-user-defined 'org-sort-agenda-items-sort-created)
+                ((org-agenda-overriding-header "❖------------------------- Personal All TODO lists ----------------------------------❖")
+                 (org-agenda-cmp-user-defined 'org-agenda-sort-all-todo)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files (append carlos/personal-org-agenda-filelist))
                  (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
@@ -69,6 +69,8 @@
          ((todo "DONE"
                 ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
                  (org-agenda-files '("/Users/carlos/Documents/leju/leju_prj/LejuTodo.org" "/Users/carlos/Documents/leju/leju_prj/personal.org"))
+                 (org-agenda-cmp-user-defined 'org-sort-done-entries)
+                 (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))))
 
 (defun org-agenda-skip-if-not-Updated-today ()
@@ -129,6 +131,39 @@ should be continued."
   (let ((pom (get-text-property 0 'org-marker src-str)))
     (let ((scheduled (org-entry-get pom "SCHEDULED")))
       (concat src-str (or (org-entry-get pom "CREATED") "unknowtime") (and scheduled (concat " S->" scheduled )) ":"))))
+
+(defun org-agenda-sort-all-todo (a b)
+  (let* (
+        (a-pos (get-text-property 0 'org-marker a))
+        (b-pos (get-text-property 0 'org-marker b))
+        (a-todo (org-entry-get a-pos "TODO"))
+        (b-todo (org-entry-get b-pos "TODO"))
+        (a-time-adjust-days 0)
+        (b-time-adjust-days 0)
+        )
+    (let ((a-priority  (- 255 (string-to-char (org-entry-get a-pos "PRIORITY"))))
+          (b-priority (- 255 (string-to-char (org-entry-get b-pos "PRIORITY"))))
+          )
+      (if (string-match "WORKING" a-todo)
+          (progn
+            ;; (setq a-priority (- 255 (string-to-char "B")))
+            (setq a-time-adjust-days  -3650)))
+      (if (string-match "WORKING" b-todo)
+          (progn
+            ;; (setq b-priority (- 255 (string-to-char "B")))
+            (setq b-time-adjust-days -3650)))
+      (let ((a-time (+ a-time-adjust-days (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos org-expiry-updated-property-name) (org-entry-get a-pos "CREATED") "[2016-01-02 Sun 00:01]")))))
+            (b-time (+ b-time-adjust-days (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos org-expiry-updated-property-name) (org-entry-get b-pos "CREATED") "[2016-01-02 Sun 00:01]"))))))
+        (cond
+         ((equal a-priority b-priority) (progn
+                                          (if (time-less-p a-time b-time)
+                                              -1
+                                            1)))
+         ((> a-priority b-priority) -1)
+         ((< a-priority b-priority) 1)
+         (t nil))))))
+
+
 
 (defun org-sort-agenda-items-sort-created (a b)
   (let (

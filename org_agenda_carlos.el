@@ -14,8 +14,8 @@
                  (org-agenda-files carlos/personal-org-agenda-filelist)))
           (agenda "schedule"
                   ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ".* TARGET .*\\|.* WORKING .*\\|.* IN-PROGRESS .*"))
-                   (org-agenda-span (or carlos/agenda_view_span 2))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ".* WORKING .*\\|.* DONE .*"))
+                   (org-agenda-span (or carlos/agenda_view_span 1))
                    (org-agenda-start-day "+0d")
                    (org-agenda-start-on-weekday nil)
                    (org-agenda--show-holidays-birthdays t)
@@ -33,15 +33,13 @@
                 ((org-agenda-overriding-header "❖------------------------- TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-agenda-sort-all-todo)
                  (org-agenda-sorting-strategy '(user-defined-up))
-                 (org-agenda-files (append  carlos/org-agenda-file-list ))
-                 (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
+                 (org-agenda-files (append  carlos/org-agenda-file-list ))))))
         ("carlos/org-all-personal-todo" "carlos org all todo to pick"
          ((alltodo ""
                 ((org-agenda-overriding-header "❖------------------------- Personal All TODO lists ----------------------------------❖")
                  (org-agenda-cmp-user-defined 'org-agenda-sort-all-todo)
                  (org-agenda-sorting-strategy '(user-defined-up))
-                 (org-agenda-files (append carlos/personal-org-agenda-filelist))
-                 (org-agenda-skip-function 'carlos/org-agenda-filter-schedule-todo)))))
+                 (org-agenda-files (append carlos/personal-org-agenda-filelist))))))
         ("carlos/org-agenda" "carlos work panel"
          (
           (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\""
@@ -51,8 +49,8 @@
                  (org-agenda-files carlos/org-agenda-file-list)))
           (agenda "schedule"
                   ((org-agenda-overriding-header "❖----------------SCHEDULE----------------------❖")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp  ".* TARGET .*\\|.* WORKING .*\\|.* IN-PROGRESS .*" ))
-                   (org-agenda-span (or carlos/agenda_view_span 2))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp  ".* WORKING .*\\|.* DONE .*" ))
+                   (org-agenda-span (or carlos/agenda_view_span 1))
                    (org-agenda-start-day "+0d")
                    (org-agenda-start-on-weekday nil)
                    (org-agenda--show-holidays-birthdays t)
@@ -73,6 +71,28 @@
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))))
 
+(defun org-sort-done-entries (a b)
+  (let (
+        (a-pos (get-text-property 0 'org-marker a))
+        (b-pos (get-text-property 0 'org-marker b))
+        )
+    (let ((a-time (+ 0 (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get a-pos org-expiry-updated-property-name) (org-entry-get a-pos "CREATED") "[1970-01-02 Sun 00:01]")))))
+            (b-time (+ 0 (time-to-number-of-days (carlos/org-agenda-parsetime (or (org-entry-get b-pos org-expiry-updated-property-name) (org-entry-get b-pos "CREATED") "[1970-01-02 Sun 00:01]"))))))
+        (if (time-less-p a-time b-time)
+            1
+          -1))))
+
+(setq carlos/org-agenda-view-selected-day nil)
+
+(defun carlos/get-org-agenda-view-selected-day ()
+  "docstring"
+  carlos/org-agenda-view-selected-day
+  )
+(defun carlos/set-org-agenda-view-selected-day (selected-day)
+  "docstring"
+  (setq carlos/org-agenda-view-selected-day selected-day)
+  )
+
 (defun org-agenda-skip-if-not-Updated-today ()
   "If this function returns nil, the current match should not be skipped.
 Otherwise, the function must return a position from where the search
@@ -80,12 +100,10 @@ should be continued."
   (ignore-errors
     (let* ((subtree-end (save-excursion (progn
                                         (org-next-visible-heading 1)
-                                        (point)
-                                        )))
-          (now (float-time (carlos/parse-time (format-time-string "%Y-%m-%d"))))
+                                        (point))))
+          (now (float-time (carlos/parse-time (or (carlos/get-org-agenda-view-selected-day) (format-time-string "%Y-%m-%d")))))
           (updated_at_str (org-entry-get (point) org-expiry-updated-property-name))
-          (updated_at (float-time (carlos/parse-time updated_at_str)))
-          )
+          (updated_at (float-time (carlos/parse-time updated_at_str))))
       (if (or (> now updated_at) (equal updated_at_str nil))
           (progn
             subtree-end)

@@ -40,6 +40,13 @@
                  (org-agenda-cmp-user-defined 'org-agenda-sort-all-todo)
                  (org-agenda-sorting-strategy '(user-defined-up))
                  (org-agenda-files (append carlos/personal-org-agenda-filelist))))))
+        ("carlos/org-target-all-todo" "carlos show todo under selector target"
+         ((alltodo ""
+                ((org-agenda-overriding-header "❖------------------------- Personal All TODO lists ----------------------------------❖")
+                 (org-agenda-cmp-user-defined 'org-agenda-sort-all-todo)
+                 (org-agenda-sorting-strategy '(user-defined-up))
+                 (org-agenda-skip-function 'org-agenda-filter-of-select-target)
+                 (org-agenda-files (append carlos/agenda-target-file-list))))))
         ("carlos/org-agenda" "carlos work panel"
          (
           (tags "+UNHOLD+TODO=\"WORKING\"|-HOLD+TODO=\"WORKING\""
@@ -86,12 +93,11 @@
 
 (defun carlos/get-org-agenda-view-selected-day ()
   "docstring"
-  carlos/org-agenda-view-selected-day
-  )
+  carlos/org-agenda-view-selected-day)
+
 (defun carlos/set-org-agenda-view-selected-day (selected-day)
   "docstring"
-  (setq carlos/org-agenda-view-selected-day selected-day)
-  )
+  (setq carlos/org-agenda-view-selected-day selected-day))
 
 (defun org-agenda-skip-if-not-Updated-today ()
   "If this function returns nil, the current match should not be skipped.
@@ -99,16 +105,17 @@ Otherwise, the function must return a position from where the search
 should be continued."
   (ignore-errors
     (let* ((subtree-end (save-excursion (progn
-                                        (org-next-visible-heading 1)
-                                        (point))))
-          (now (float-time (carlos/parse-time (or (carlos/get-org-agenda-view-selected-day) (format-time-string "%Y-%m-%d")))))
-          (updated_at_str (org-entry-get (point) org-expiry-updated-property-name))
-          (updated_at (float-time (carlos/parse-time updated_at_str))))
-      (if (or (> now updated_at) (equal updated_at_str nil))
+                                          (org-next-visible-heading 1)
+                                          (point))))
+           (select-date (or (carlos/get-org-agenda-view-selected-day) (format-time-string "%Y-%m-%d")))
+           (now (float-time (carlos/parse-time select-date)))
+           (updated_at_str (org-entry-get (point) org-expiry-updated-property-name))
+           (updated_at (float-time (carlos/parse-time (or updated_at_str (format-time-string "%Y-%m-%d"))))))
+      (if (and updated_at_str  (string-match (format-time-string "%Y-%m-%d" updated_at) select-date))
           (progn
-            subtree-end)
+            nil)
         (progn
-          nil)))))
+          subtree-end)))))
 
 (defun org-agenda-skip-if-scheduled-or-low-priority ()
   "If this function returns nil, the current match should not be skipped.
@@ -215,15 +222,7 @@ should be continued."
 
 (defun carlos/org-all-todo-agenda-show (&optional arg)
   (interactive )
-  (progn
-    (message "Collecting Todo..." )
-    (setq frame-title-format "carlos/org-all-todo")
-    (if (or carlos/org-agenda-force-personal (and (carlos/is-home-network) (not carlos/org-agenda-force-leju)))
-        (org-agenda arg "carlos/org-all-personal-todo")
-      (org-agenda arg "carlos/org-all-leju-todo"))
-    (toggle-truncate-lines nil)
-    (when (< 1 (length (window-list)))
-      (delete-other-windows))))
+  (carlos/agenda-select-target))
 
 
 (defun carlos/org-personal-agenda-show (&optional arg)

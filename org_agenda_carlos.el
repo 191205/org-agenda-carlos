@@ -85,7 +85,7 @@
   (setq carlos/debug-text-perporty src-str)
   (let ((pom (get-text-property 0 'org-marker src-str)))
     (let ((closed (org-entry-get pom "CLOSED")))
-      (concat src-str  closed ":"))))
+      (concat src-str " " closed " :"))))
 
 (defun org-sort-done-entries (a b)
   (let (

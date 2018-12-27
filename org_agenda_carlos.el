@@ -71,12 +71,21 @@
                  (org-agenda-skip-function 'org-agenda-skip-if-scheduled-or-low-priority)
                  ))))
         ("carlos/did-today" "carlos Did task panel"
-         ((todo "DONE"
-                ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
-                 (org-agenda-files '("/Users/carlos/Documents/leju/leju_prj/LejuTodo.org" "/Users/carlos/Documents/leju/leju_prj/personal.org"))
-                 (org-agenda-cmp-user-defined 'org-sort-done-entries)
-                 (org-agenda-sorting-strategy '(user-defined-up))
-                 (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))))
+           ((todo "DONE"
+                  ((org-agenda-overriding-header "❖------------------------- DONE lists ----------------------------------❖")
+                   (org-agenda-files '("/Users/carlos/Documents/leju/leju_prj/LejuTodo.org" "/Users/carlos/Documents/leju/leju_prj/personal.org"))
+                   (org-agenda-cmp-user-defined 'org-sort-done-entries)
+                   (org-agenda-before-sorting-filter-function 'carlos/org-agenda-before-sorting-filter-add-done)
+                   (org-agenda-sorting-strategy '(user-defined-up))
+                   (org-agenda-skip-function 'org-agenda-skip-if-not-Updated-today)))))))
+
+(defun carlos/org-agenda-before-sorting-filter-add-done (src-str &optional index)
+  "docstring"
+  (interactive)
+  (setq carlos/debug-text-perporty src-str)
+  (let ((pom (get-text-property 0 'org-marker src-str)))
+    (let ((closed (org-entry-get pom "CLOSED")))
+      (concat src-str  closed ":"))))
 
 (defun org-sort-done-entries (a b)
   (let (

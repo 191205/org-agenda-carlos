@@ -257,4 +257,21 @@ should be continued."
       (org-expiry-insert-created))))
 (add-hook 'org-insert-heading-hook 'carlos/insert-heading-created-timestamp)
 
+(defun carlos/agenda-gtd-sort-targets (target-list)
+    (sort target-list
+          (lambda (a b)
+            (> (nth 4 a) (nth 4 b)))))
+(defun carlos/agenda-gtd-create-my-targets (file-lists)
+  "docstring"
+  (let* ((found-targets (list)))
+    (org-map-entries
+     (lambda ()
+       (let* ((heading (replace-regexp-in-string " *\[[0-9]*/[0-9]*\] *" "" (substring-no-properties (org-get-heading t t t))) ))
+         (setq found-targets (append found-targets (list (cons heading (list heading buffer-file-name heading (org-get-priority (org-get-heading t t)))))))
+         ))
+     "-archived"
+     file-lists
+     'carlos/org-agenda-skip-outline-not-root-level)
+    (carlos/agenda-gtd-sort-targets found-targets)))
+
 (provide 'org_agenda_carlos)
